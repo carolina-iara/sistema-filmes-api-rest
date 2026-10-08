@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Filmes</title>
+</head>
+
+<body>
+
+    <h1>Filmes cadastrados</h1>
+
+    <a href="/filmes/novo">Cadastrar novo filme</a>
+
+    <hr>
+
+    <p th:if="${#lists.isEmpty(filmes)}">
+        Nenhum filme cadastrado.
+    </p>
+
+    <ul>
+        <li th:each="filme : ${filmes}">
+
+            <strong th:text="${filme.titulo}">
+                Título do filme
+            </strong>
+
+            -
+            
+            <span th:text="${filme.genero}">
+                Gênero
+            </span>
+
+            (<span th:text="${filme.anoLancamento}">
+                Ano
+            </span>)
+
+            -
+
+            <a th:href="@{/filmes/{id}(id=${filme.id})}">
+                Ver detalhes
+            </a>
+
+        </li>
+    </ul>
+
+</body>
+
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Detalhes do Filme</title>
+</head>
+
+<body>
+
+    <h1 th:text="${filme.titulo}">
+        Título do filme
+    </h1>
+
+    <p>
+        <strong>Gênero:</strong>
+        <span th:text="${filme.genero}">
+            Gênero
+        </span>
+    </p>
+
+    <p>
+        <strong>Ano de lançamento:</strong>
+        <span th:text="${filme.anoLancamento}">
+            Ano
+        </span>
+    </p>
+
+    <h2>Sinopse</h2>
+
+    <p th:text="${filme.sinopse}">
+        Sinopse do filme
+    </p>
+
+    <hr>
+
+    <h2>Análises</h2>
+
+    <p th:if="${#lists.isEmpty(filme.analises)}">
+        Nenhuma análise cadastrada.
+    </p>
+
+    <ul>
+        <li th:each="analise : ${filme.analises}">
+
+            <p>
+                <strong>Nota:</strong>
+                <span th:text="${analise.nota}">
+                    5
+                </span>
+            </p>
+
+            <p>
+                <strong>Análise:</strong>
+                <span th:text="${analise.analise}">
+                    Texto da análise
+                </span>
+            </p>
+
+        </li>
+    </ul>
+
+    <hr>
+
+    <h2>Adicionar análise</h2>
+
+    <form th:action="@{/filmes/{id}/analises(id=${filme.id})}" method="post">
+
+        <div>
+            <label for="analise">Sua análise:</label>
+            <br>
+
+            <textarea
+                id="analise"
+                name="analise"
+                rows="5"
+                cols="50"
+                required>
+            </textarea>
+        </div>
+
+        <br>
+
+        <div>
+            <label for="nota">Nota:</label>
+
+            <select id="nota" name="nota" required>
+
+                <option value="">
+                    Selecione uma nota
+                </option>
+
+                <option value="1">
+                    1 - Péssimo
+                </option>
+
+                <option value="2">
+                    2 - Ruim
+                </option>
+
+                <option value="3">
+                    3 - Regular
+                </option>
+
+                <option value="4">
+                    4 - Bom
+                </option>
+
+                <option value="5">
+                    5 - Excelente
+                </option>
+
+            </select>
+        </div>
+
+        <br>
+
+        <button type="submit">
+            Adicionar análise
+        </button>
+
+    </form>
+
+    <hr>
+
+    <a href="/filmes">
+        Voltar para a lista de filmes
+    </a>
+
+</body>
+
+</html>
