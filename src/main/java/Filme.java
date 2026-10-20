@@ -1,15 +1,29 @@
 package sistema_filmes.model;
 
+import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@Entity
+@Table(name = "filme")
 public class Filme {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false)
     private String titulo;
+
+    @Column(columnDefinition = "TEXT")
     private String sinopse;
+
     private String genero;
+
+    @Column(name = "ano_lancamento")
     private int anoLancamento;
+
+    @OneToMany(mappedBy = "filme", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Analise> analises = new ArrayList<>();
 
     public Filme() {

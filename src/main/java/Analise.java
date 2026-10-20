@@ -1,22 +1,41 @@
 package sistema_filmes.model;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "analise")
 public class Analise {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Filme filme;
-    private String analise;
+
+    @Column(name = "nome_usuario", nullable = false)
+    private String nomeUsuario;
+
+    @Column(columnDefinition = "TEXT", nullable = false)
+    private String comentario;
+
+    @Column(nullable = false)
     private int nota;
 
+    @ManyToOne
+    @JoinColumn(name = "filme_id", nullable = false)
+    private Filme filme;
+
+    // Construtor vazio obrigatório para o JPA/Hibernate
     public Analise() {
     }
 
-    public Analise(Long id, Filme filme, String analise, int nota) {
+    public Analise(Long id, String nomeUsuario, String comentario, int nota, Filme filme) {
         this.id = id;
-        this.filme = filme;
-        this.analise = analise;
+        this.nomeUsuario = nomeUsuario;
+        this.comentario = comentario;
         this.nota = nota;
+        this.filme = filme;
     }
 
+    // Getters e Setters
     public Long getId() {
         return id;
     }
@@ -25,20 +44,25 @@ public class Analise {
         this.id = id;
     }
 
-    public Filme getFilme() {
-        return filme;
+    public String getNomeUsuario() {
+        return nomeUsuario;
     }
 
-    public void setFilme(Filme filme) {
-        this.filme = filme;
+    public void setNomeUsuario(String nomeUsuario) {
+        this.nomeUsuario = nomeUsuario;
     }
 
-    public String getAnalise() {
-        return analise;
+    public String getComentario() {
+        return comentario;
     }
 
-    public void setAnalise(String analise) {
-        this.analise = analise;
+    public void setComentario(String comentario) {
+        this.comentario = comentario;
+    }
+
+    // Atalho compatível caso algum trecho do código chame setAnalise
+    public void setAnalise(String comentario) {
+        this.comentario = comentario;
     }
 
     public int getNota() {
@@ -47,5 +71,13 @@ public class Analise {
 
     public void setNota(int nota) {
         this.nota = nota;
+    }
+
+    public Filme getFilme() {
+        return filme;
+    }
+
+    public void setFilme(Filme filme) {
+        this.filme = filme;
     }
 }
