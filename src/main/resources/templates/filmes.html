@@ -1,49 +1,58 @@
 <!DOCTYPE html>
-<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
-
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Filmes</title>
+    <title>Lista de Filmes</title>
+    <!-- Importando o jQuery via CDN -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
-
 <body>
+    <h1>Lista de Filmes</h1>
+    <a href="/filmes/novo">Cadastrar Novo Filme</a>
 
-    <h1>Filmes cadastrados</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Título</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Exemplo iterando com Thymeleaf -->
+            <tr th:each="filme : ${filmes}">
+                <td th:text="${filme.id}">1</td>
+                <td th:text="${filme.titulo}">Título</td>
+                <td>
+                    <a th:href="@{/filmes/editar/{id}(id=${filme.id})}">Editar</a>
+                    <button class="btn-deletar" th:data-id="${filme.id}">Excluir</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 
-    <a href="/filmes/novo">Cadastrar novo filme</a>
-
-    <hr>
-
-    <p th:if="${#lists.isEmpty(filmes)}">
-        Nenhum filme cadastrado.
-    </p>
-
-    <ul>
-        <li th:each="filme : ${filmes}">
-
-            <strong th:text="${filme.titulo}">
-                Título do filme
-            </strong>
-
-            -
-            
-            <span th:text="${filme.genero}">
-                Gênero
-            </span>
-
-            (<span th:text="${filme.anoLancamento}">
-                Ano
-            </span>)
-
-            -
-
-            <a th:href="@{/filmes/{id}(id=${filme.id})}">
-                Ver detalhes
-            </a>
-
-        </li>
-    </ul>
-
+    <script>
+        // Script em jQuery para tratar a requisição DELETE
+        $(document).ready(function() {
+            $('.btn-deletar').click(function() {
+                var filmeId = $(this).attr('data-id');
+                
+                if(confirm("Tem certeza que deseja excluir este filme?")) {
+                    $.ajax({
+                        url: '/api/filmes/' + filmeId, // Ajuste para a rota da sua API REST
+                        type: 'DELETE',
+                        success: function(result) {
+                            alert('Filme excluído com sucesso!');
+                            location.reload(); // Recarrega a página para atualizar a tabela
+                        },
+                        error: function(err) {
+                            alert('Erro ao excluir o filme.');
+                            console.log(err);
+                        }
+                    });
+                }
+            });
+        });
+    </script>
 </body>
-
 </html>

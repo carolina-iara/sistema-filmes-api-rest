@@ -3,14 +3,20 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Cadastrar Filme</title>
+    <title>Cadastrar / Editar Filme</title>
+    <!-- Importando o jQuery via CDN -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
 <body>
 
-    <h1>Cadastrar novo filme</h1>
+    <h1 th:text="${filme.id != null} ? 'Editar Filme' : 'Cadastrar novo filme'">Cadastrar novo filme</h1>
 
-    <form th:action="@{/filmes}" th:object="${filme}" method="post">
+    <!-- Removido o method="post" nativo para gerenciar via jQuery/AJAX -->
+    <form id="form-filme" th:object="${filme}">
+
+        <!-- Campo oculto para armazenar o ID caso seja uma edição -->
+        <input type="hidden" id="id" th:field="*{id}">
 
         <div>
             <label for="titulo">Título:</label>
@@ -35,19 +41,54 @@
 
         <div>
             <label for="anoLancamento">Ano de lançamento:</label>
-            <input type="number" id="anoLancamento"
-                   th:field="*{anoLancamento}" required>
+            <input type="number" id="anoLancamento" th:field="*{anoLancamento}" required>
         </div>
 
         <br>
 
-        <button type="submit">Cadastrar filme</button>
+        <button type="submit" th:text="${filme.id != null} ? 'Salvar Alterações' : 'Cadastrar filme'">Cadastrar filme</button>
 
     </form>
 
     <br>
 
     <a href="/filmes">Voltar para a lista de filmes</a>
+
+    <!-- Script em jQuery para enviar POST ou PUT via AJAX -->
+    <script>
+        $(document).ready(function() {
+            $('#form-filme').submit(function(event) {
+                event.preventDefault(); // Evita o comportamento padrão do form
+
+                var filmeId = $('#id').val();
+                var dadosFilme = {
+                    titulo: $('#titulo').val(),
+                    sinopse: $('#sinopse').val(),
+                    genero: $('#genero').val(),
+                    anoLancamento: $('#anoLancamento').val()
+                };
+
+                // Se houver ID, usamos PUT na rota da API; se não, usamos POST
+                var tipoRequisicao = filmeId ? 'PUT' : 'POST';
+                var urlRequisicao = filmeId ? '/api/filmes/' + filmeId : '/api/filmes';
+
+                $.ajax({
+                    url: urlRequisicao,
+                    type: tipoRequisicao,
+                    contentType: 'application/json',
+                    data: JSON.stringify(dadosFilme),
+                    success: function(response) {
+                        alert('Filme salvo com sucesso!');
+                        window.location.href = '/filmes'; // Redireciona para a listagem
+                    },
+                    error: function(error) {
+                        alert('Erro ao salvar o filme.');
+                        console.log(error);
+                    }
+                });
+            });
+        });
+    </script>
 
 </body>
 
