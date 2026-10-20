@@ -3,10 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <title>Lista de Filmes</title>
-    <!-- Importando o jQuery via CDN -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body.dark-mode {
+            background-color: #121212;
+            color: #ffffff;
+        }
+        body.dark-mode table, body.dark-mode th, body.dark-mode td {
+            border-color: #444;
+        }
+        body.dark-mode a {
+            color: #bb86fc;
+        }
+    </style>
 </head>
 <body>
+    <div style="text-align: right; padding: 10px;">
+        <button id="btn-tema">Mudar Tema (Claro/Escuro)</button>
+    </div>
+
     <h1>Lista de Filmes</h1>
     <a href="/filmes/novo">Cadastrar Novo Filme</a>
 
@@ -19,7 +34,6 @@
             </tr>
         </thead>
         <tbody>
-            <!-- Exemplo iterando com Thymeleaf -->
             <tr th:each="filme : ${filmes}">
                 <td th:text="${filme.id}">1</td>
                 <td th:text="${filme.titulo}">Título</td>
@@ -32,18 +46,46 @@
     </table>
 
     <script>
-        // Script em jQuery para tratar a requisição DELETE
+        function setCookie(nome, valor, dias) {
+            var d = new Date();
+            d.setTime(d.getTime() + (dias * 24 * 60 * 60 * 1000));
+            document.cookie = nome + "=" + valor + ";expires=" + d.toUTCString() + ";path=/";
+        }
+
+        function getCookie(nome) {
+            var nameEQ = nome + "=";
+            var ca = document.cookie.split(';');
+            for(var i = 0; i < ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+            }
+            return null;
+        }
+
         $(document).ready(function() {
+            if (getCookie("tema_preferido") === "dark") {
+                $('body').addClass('dark-mode');
+            }
+
+            $('#btn-tema').click(function() {
+                $('body').toggleClass('dark-mode');
+                if ($('body').hasClass('dark-mode')) {
+                    setCookie("tema_preferido", "dark", 30);
+                } else {
+                    setCookie("tema_preferido", "light", 30);
+                }
+            });
+
             $('.btn-deletar').click(function() {
                 var filmeId = $(this).attr('data-id');
-                
                 if(confirm("Tem certeza que deseja excluir este filme?")) {
                     $.ajax({
-                        url: '/api/filmes/' + filmeId, // Ajuste para a rota da sua API REST
+                        url: '/api/filmes/' + filmeId,
                         type: 'DELETE',
                         success: function(result) {
                             alert('Filme excluído com sucesso!');
-                            location.reload(); // Recarrega a página para atualizar a tabela
+                            location.reload();
                         },
                         error: function(err) {
                             alert('Erro ao excluir o filme.');

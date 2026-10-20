@@ -5,12 +5,13 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.2.5</version> <!-- Versão estável padrão recomendada para Spring Boot com JPA e MySQL -->
-		<relativePath/> <!-- lookup parent from repository -->
+		<version>3.2.5</version>
+		<relativePath/>
 	</parent>
 	<groupId>br.com.carolina</groupId>
 	<artifactId>br.com.carolina</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<packaging>war</packaging> <!-- Alterado para war conforme os requisitos da Atividade 4 -->
 	<name>sistema-filmes</name>
 	<description>Sistema de Filmes e Avaliações com API REST</description>
 	<url/>
@@ -49,7 +50,7 @@
 			<scope>runtime</scope>
 		</dependency>
 
-		<!-- Thymeleaf (caso queira manter telas web antigas) -->
+		<!-- Thymeleaf para as páginas web -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-thymeleaf</artifactId>

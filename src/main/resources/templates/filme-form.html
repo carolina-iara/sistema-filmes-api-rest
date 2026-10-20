@@ -4,71 +4,98 @@
 <head>
     <meta charset="UTF-8">
     <title>Cadastrar / Editar Filme</title>
-    <!-- Importando o jQuery via CDN -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body.dark-mode {
+            background-color: #121212;
+            color: #ffffff;
+        }
+        body.dark-mode a {
+            color: #bb86fc;
+        }
+    </style>
 </head>
 
 <body>
+    <div style="text-align: right; padding: 10px;">
+        <button id="btn-tema">Mudar Tema (Claro/Escuro)</button>
+    </div>
 
     <h1 th:text="${filme.id != null} ? 'Editar Filme' : 'Cadastrar novo filme'">Cadastrar novo filme</h1>
 
-    <!-- Removido o method="post" nativo para gerenciar via jQuery/AJAX -->
     <form id="form-filme" th:object="${filme}">
-
-        <!-- Campo oculto para armazenar o ID caso seja uma edição -->
         <input type="hidden" id="id" th:field="*{id}">
 
         <div>
             <label for="titulo">Título:</label>
             <input type="text" id="titulo" th:field="*{titulo}" required>
         </div>
-
         <br>
-
         <div>
             <label for="sinopse">Sinopse:</label>
             <textarea id="sinopse" th:field="*{sinopse}" required></textarea>
         </div>
-
         <br>
-
         <div>
             <label for="genero">Gênero:</label>
             <input type="text" id="genero" th:field="*{genero}" required>
         </div>
-
         <br>
-
         <div>
             <label for="anoLancamento">Ano de lançamento:</label>
             <input type="number" id="anoLancamento" th:field="*{anoLancamento}" required>
         </div>
-
         <br>
 
         <button type="submit" th:text="${filme.id != null} ? 'Salvar Alterações' : 'Cadastrar filme'">Cadastrar filme</button>
-
     </form>
 
     <br>
-
     <a href="/filmes">Voltar para a lista de filmes</a>
 
-    <!-- Script em jQuery para enviar POST ou PUT via AJAX -->
     <script>
+        function setCookie(nome, valor, dias) {
+            var d = new Date();
+            d.setTime(d.getTime() + (dias * 24 * 60 * 60 * 1000));
+            document.cookie = nome + "=" + valor + ";expires=" + d.toUTCString() + ";path=/";
+        }
+
+        function getCookie(nome) {
+            var nameEQ = nome + "=";
+            var ca = document.cookie.split(';');
+            for(var i = 0; i < ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+            }
+            return null;
+        }
+
         $(document).ready(function() {
+            if (getCookie("tema_preferido") === "dark") {
+                $('body').addClass('dark-mode');
+            }
+
+            $('#btn-tema').click(function() {
+                $('body').toggleClass('dark-mode');
+                if ($('body').hasClass('dark-mode')) {
+                    setCookie("tema_preferido", "dark", 30);
+                } else {
+                    setCookie("tema_preferido", "light", 30);
+                }
+            });
+
             $('#form-filme').submit(function(event) {
-                event.preventDefault(); // Evita o comportamento padrão do form
+                event.preventDefault();
 
                 var filmeId = $('#id').val();
                 var dadosFilme = {
                     titulo: $('#titulo').val(),
                     sinopse: $('#sinopse').val(),
                     genero: $('#genero').val(),
-                    anoLancamento: $('#anoLancamento').val()
+                    anoLancamento: $('#anoLancamento'].val()
                 };
 
-                // Se houver ID, usamos PUT na rota da API; se não, usamos POST
                 var tipoRequisicao = filmeId ? 'PUT' : 'POST';
                 var urlRequisicao = filmeId ? '/api/filmes/' + filmeId : '/api/filmes';
 
@@ -79,7 +106,7 @@
                     data: JSON.stringify(dadosFilme),
                     success: function(response) {
                         alert('Filme salvo com sucesso!');
-                        window.location.href = '/filmes'; // Redireciona para a listagem
+                        window.location.href = '/filmes';
                     },
                     error: function(error) {
                         alert('Erro ao salvar o filme.');
@@ -89,7 +116,5 @@
             });
         });
     </script>
-
 </body>
-
 </html>
